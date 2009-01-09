@@ -1,0 +1,20 @@
+[ ] Write Connection object.
+      This is the meat of the project.  It handles all the HTTP communication as 
+      well as some of the XML parsing (however, each object will be responsible
+      for knowing how to deserialize itself from it's XML representation).
+[ ] Write the Filter object.
+[ ] Write the Case object.
+[ ] Write the Wiki object.
+[ ] Write the Area object.
+[ ] Write the FixFor object.
+[ ] Write the Project object.
+[ ] Write the Priority object.
+[ ] Write the Category object.
+[ ] Write the WorkingSchedule object.
+[ ] Write the Interval object.
+[ ] Write the Person object.
+[ ] Write the Discussion object.
+[ ] Write the CheckIn object.
+[ ] Write the MailBox object.
+[ ] Write the Setting object.
+[ ] Write the various Exception objects.
