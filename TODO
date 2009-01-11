@@ -1,4 +1,4 @@
-[ ] Write Connection object.
+[*] Write Connection object.
       This is the meat of the project.  It handles all the HTTP communication as 
       well as some of the XML parsing (however, each object will be responsible
       for knowing how to deserialize itself from it's XML representation).
@@ -17,4 +17,4 @@
 [ ] Write the CheckIn object.
 [ ] Write the MailBox object.
 [ ] Write the Setting object.
-[ ] Write the various Exception objects.
+[*] Write the various Exception objects.
