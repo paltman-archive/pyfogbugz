@@ -31,7 +31,9 @@ import xml.sax
 from pyfogbugz import config, UserAgent, XmlHandler
 from pyfogbugz.exceptions import FogBugzClientError, FogBugzServerError
 from pyfogbugz.filter import FilterList
+from pyfogbugz.case import CaseList
 
+AVAILABLE_CASE_COLUMNS = ('ixBug', 'fOpen', 'sTitle', 'sLatestTextSummary', 'ixBugEventLatestText', 'ixProject', 'sProject', 'ixArea', 'sArea', 'ixGroup', 'ixPersonAssignedTo', 'sPersonAssignedTo', 'sEmailAssignedTo', 'ixPersonOpenedBy', 'ixPersonResolvedBy', 'ixPersonClosedBy', 'ixPersonLastEditedBy', 'ixStatus', 'sStatus', 'ixPriority', 'sPriority', 'ixFixFor', 'sFixFor', 'dtFixFor', 'sVersion', 'sComputer', 'hrsOrigEst', 'hrsCurrEst', 'hrsElapsed', 'c', 'sCustomerEmail', 'ixMailbox', 'ixCategory', 'sCategory', 'dtOpened', 'dtResolved', 'dtClosed', 'ixBugEventLatest', 'dtLastUpdated', 'fReplied', 'fForwarded', 'sTicket', 'ixDiscussTopic', 'dtDue', 'sReleaseNotes', 'ixBugEventLastView', 'dtLastView', 'ixRelatedBugs', 'sScoutDescription', 'sScoutMessage', 'fScoutStopReporting', 'fSubscribed')
 
 class Connection(object):
     def __init__(self, url=None, username=None, password=None):
@@ -171,4 +173,20 @@ class FogBugzConnection(Connection):
             else:
                 return filter_list.filters
     
+    def list_cases(self, search=None, max_records=None):
+        query = 'cmd=search&cols=%s' % ','.join(AVAILABLE_CASE_COLUMNS)
+        if search:
+            query += '&q=%s' % search
+        if max_records:
+            query += '&max=%s' % max_records
+        response = self.make_request(query)
+        if response:
+            data = response.read()
+            case_list = CaseList(connection=self)
+            xml.sax.parseString(data, case_list)
+            if case_list.has_error:
+                raise FogBugzClientError("Invalid search: %s" % case_list.error_message)
+            else:
+                return case_list.cases
+
     

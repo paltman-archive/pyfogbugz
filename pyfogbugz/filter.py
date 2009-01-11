@@ -46,7 +46,6 @@ class FilterList(XmlHandler):
     
     def startElement(self, name, attrs):
         super(FilterList, self).startElement(name, attrs)
-        self.current_filter = None
         if name == 'filters':
             self.filters = []
         elif name == 'filter':
@@ -57,5 +56,5 @@ class FilterList(XmlHandler):
         if name == 'filter' and self.current_filter:
             self.current_filter.name = self.current_value
             self.filters.append(self.current_filter)    
-        self.current_filter = None
+            self.current_filter = None
         super(FilterList, self).endElement(name)
