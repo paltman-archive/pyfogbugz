@@ -2,7 +2,8 @@
       This is the meat of the project.  It handles all the HTTP communication as 
       well as some of the XML parsing (however, each object will be responsible
       for knowing how to deserialize itself from it's XML representation).
-[ ] Write the Filter object.
+[*] Write the Filter object.
+[ ] Add ability to change current filter.
 [ ] Write the Case object.
 [ ] Write the Wiki object.
 [ ] Write the Area object.

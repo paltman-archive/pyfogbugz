@@ -27,10 +27,10 @@ import urlparse
 import socket
 import errno
 import xml.sax
-from xml.sax.handler import ContentHandler
 
-from pyfogbugz import config, UserAgent
+from pyfogbugz import config, UserAgent, XmlHandler
 from pyfogbugz.exceptions import FogBugzClientError, FogBugzServerError
+from pyfogbugz.filter import FilterList
 
 
 class Connection(object):
@@ -73,24 +73,6 @@ class Connection(object):
         else:
             raise FogBugzClientError("Please report this exception as an issue with pyfogbugz.")
             
-
-class XmlHandler(object, ContentHandler):
-    def __init__(self):
-        self.error_code = None
-        self.error_message = None
-        self.has_error = False
-        self.current_value = ''
-    def characters(self, content):
-        self.current_value += content
-    def startElement(self, name, attrs):
-        self.current_value = ''
-        if name == 'error':
-            self.error_code = attr['code']
-            self.has_error = True
-    def endElement(self, name):
-        if name == 'error':
-            self.error_message = self.current_value
-        self.current_value = ''
         
         
 class ApiCheckHandler(XmlHandler):
@@ -142,6 +124,7 @@ class FogBugzConnection(Connection):
         @type password: string
         @param password: The password for the connection
         """
+        self.token = None
         self.base_path = None
         super(FogBugzConnection, self).__init__(url, username, password)
         self._check_api()
@@ -152,6 +135,8 @@ class FogBugzConnection(Connection):
         computed_path = path
         if self.base_path:
             computed_path = "%s%s" % (self.base_path, path)
+            if self.token:
+                computed_path += "&token=%s" % self.token
         return super(FogBugzConnection, self).make_request(computed_path, data)
     
     def _check_api(self):
@@ -174,4 +159,16 @@ class FogBugzConnection(Connection):
                 raise FogBugzClientError("Invalid login: %s" % handler.error_message)
             else:
                 self.token = handler.token
+                
+    def list_filters(self):
+        response = self.make_request('cmd=listFilters')
+        if response:
+            data = response.read()
+            filter_list = FilterList()
+            xml.sax.parseString(data, filter_list)
+            if filter_list.has_error:
+                raise FogBugzClientError("Invalid filter request: %s" % filter_list.error_message)
+            else:
+                return filter_list.filters
+    
     

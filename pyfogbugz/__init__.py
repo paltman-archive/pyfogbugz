@@ -19,9 +19,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-from pyfogbugz.config import Config
 import sys
+from xml.sax.handler import ContentHandler
+
+from pyfogbugz.config import Config
 
 Version = '0.1'
 UserAgent = 'PyFogBugz/%s (%s)' % (Version, sys.platform)
 config = Config()
+
+class XmlHandler(object, ContentHandler):
+    def __init__(self):
+        self.error_code = None
+        self.error_message = None
+        self.has_error = False
+        self.current_value = ''
+    def characters(self, content):
+        self.current_value += content
+    def startElement(self, name, attrs):
+        self.current_value = ''
+        if name == 'error':
+            self.error_code = attrs['code']
+            self.has_error = True
+    def endElement(self, name):
+        if name == 'error':
+            self.error_message = self.current_value
+        self.current_value = ''

@@ -18,3 +18,37 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
+
+import xml.sax
+
+from pyfogbugz import XmlHandler
+
+class Filter(object):
+    def __init__(self, filter_type=None, id=None, name=None, is_current=False):
+        self.filter_type = filter_type
+        self.id = id
+        self.name = name
+        self.is_current = is_current
+
+
+class FilterList(XmlHandler):
+    def __init__(self):
+        super(FilterList, self).__init__()
+        self.filters = None
+        self.current_filter = None
+    
+    def startElement(self, name, attrs):
+        super(FilterList, self).startElement(name, attrs)
+        self.current_filter = None
+        if name == 'filters':
+            self.filters = []
+        elif name == 'filter':
+            self.current_filter = Filter(filter_type=attrs['type'], id=attrs['sFilter'])
+            self.current_filter.is_current = 'status' in attrs and attrs['status'] == 'current'
+
+    def endElement(self, name):
+        if name == 'filter' and self.current_filter:
+            self.current_filter.name = self.current_value
+            self.filters.append(self.current_filter)    
+        self.current_filter = None
+        super(FilterList, self).endElement(name)
