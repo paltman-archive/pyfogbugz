@@ -164,7 +164,7 @@ class FogBugzConnection(Connection):
         response = self.make_request('cmd=listFilters')
         if response:
             data = response.read()
-            filter_list = FilterList()
+            filter_list = FilterList(connection=self)
             xml.sax.parseString(data, filter_list)
             if filter_list.has_error:
                 raise FogBugzClientError("Invalid filter request: %s" % filter_list.error_message)

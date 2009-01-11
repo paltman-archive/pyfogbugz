@@ -24,18 +24,25 @@ import xml.sax
 from pyfogbugz import XmlHandler
 
 class Filter(object):
-    def __init__(self, filter_type=None, id=None, name=None, is_current=False):
+    def __init__(self, filter_type=None, id=None, name=None, is_current=False, connection=None):
         self.filter_type = filter_type
         self.id = id
         self.name = name
         self.is_current = is_current
+        self.connection = connection
+    
+    def make_current(self):
+        response = self.connection.make_request(path="cmd=saveFilter&sFilter=%s" % self.id)
+        if response.code == 200:
+            self.is_current = True
 
 
 class FilterList(XmlHandler):
-    def __init__(self):
+    def __init__(self, connection):
         super(FilterList, self).__init__()
         self.filters = None
         self.current_filter = None
+        self.connection = connection
     
     def startElement(self, name, attrs):
         super(FilterList, self).startElement(name, attrs)
@@ -43,7 +50,7 @@ class FilterList(XmlHandler):
         if name == 'filters':
             self.filters = []
         elif name == 'filter':
-            self.current_filter = Filter(filter_type=attrs['type'], id=attrs['sFilter'])
+            self.current_filter = Filter(filter_type=attrs['type'], id=attrs['sFilter'], connection=self.connection)
             self.current_filter.is_current = 'status' in attrs and attrs['status'] == 'current'
 
     def endElement(self, name):
