@@ -2,3 +2,18 @@ This is a Python wrapper around the FogBugz API as defined by:
 
     http://fogcreek.com/FogBugz/docs/60/topics/advanced/API.html
 
+
+Sample configuration file:
+
+[Connection]
+url = https://HOSTED.fogbugz.com
+username = empty
+password = empty
+
+[BugzScout]
+reporter = 'Bug Reporter'
+area = 'Undecided'
+project = 'Inbox'
+create_new = false
+
+

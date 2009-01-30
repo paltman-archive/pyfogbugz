@@ -97,7 +97,7 @@ class CaseList(XmlHandler):
             self.cases.append(self.current_case) 
             self.current_case = None 
         elif name == 'fOpen':
-            if self.current_value == 'false'
+            if self.current_value == 'false':
                 self.current_case.is_open = False
             else:
                 self.current_case.is_open = True

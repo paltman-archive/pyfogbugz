@@ -22,6 +22,7 @@
 """
 Provides connectivity to FogBugz
 """
+import urllib
 import urllib2
 import urlparse
 import socket
@@ -56,10 +57,11 @@ class Connection(object):
         response = None
         headers = {'User-Agent':UserAgent}
         if data:
+            data = urllib.urlencode(data)            
             headers['Content-Length'] = len(data)
         try:
             url = "%s/%s" % (self.url, path)
-            request = urllib2.Request(url=url, headers=headers)
+            request = urllib2.Request(url=url, headers=headers, data=data)
             response = urllib2.urlopen(request)
             if response.code < 300:
                 return response

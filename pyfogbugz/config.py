@@ -72,7 +72,7 @@ class Config(ConfigParser.SafeConfigParser):
             val = ConfigParser.SafeConfigParser.get(self, section, name)
         except:
             val = default
-        return val
+        return val.strip("'")
     
     def getint(self, section, name, default=0):
         try:
